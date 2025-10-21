@@ -11,14 +11,15 @@ All colors MUST be HSL.
     --background: 220 15% 5%;
     --foreground: 210 20% 96%;
 
-    --card: 220 15% 8%;
+    --card: 220 20% 8%;
     --card-foreground: 210 20% 96%;
 
-    --popover: 220 15% 8%;
+    --popover: 220 20% 8%;
     --popover-foreground: 210 20% 96%;
 
     --primary: 217 91% 60%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 217 91% 70%;
 
     --secondary: 220 15% 12%;
     --secondary-foreground: 210 20% 96%;
@@ -26,17 +27,23 @@ All colors MUST be HSL.
     --muted: 220 15% 12%;
     --muted-foreground: 220 9% 60%;
 
-    --accent: 217 91% 60%;
+    --accent: 271 81% 65%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 14%;
-    --input: 220 15% 12%;
+    --border: 220 20% 15%;
+    --input: 220 20% 12%;
     --ring: 217 91% 60%;
 
     --radius: 1rem;
+
+    --neon-blue: 217 91% 60%;
+    --neon-purple: 271 81% 65%;
+    --glow-blue: 0 0 20px hsl(217 91% 60% / 0.5);
+    --glow-purple: 0 0 20px hsl(271 81% 65% / 0.5);
+    --gradient-neon: linear-gradient(135deg, hsl(217 91% 60%), hsl(271 81% 65%));
 
     --sidebar-background: 220 15% 6%;
     --sidebar-foreground: 210 20% 96%;
@@ -44,7 +51,7 @@ All colors MUST be HSL.
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 15% 12%;
     --sidebar-accent-foreground: 210 20% 96%;
-    --sidebar-border: 220 15% 14%;
+    --sidebar-border: 220 20% 15%;
     --sidebar-ring: 217 91% 60%;
   }
 }
