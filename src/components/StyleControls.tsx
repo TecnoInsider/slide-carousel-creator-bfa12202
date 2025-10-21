@@ -13,7 +13,7 @@ interface StyleControlsProps {
 }
 
 export const StyleControls = ({ config, onChange }: StyleControlsProps) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const updateConfig = (key: keyof StyleConfig, value: any) => {
     onChange({ ...config, [key]: value });
