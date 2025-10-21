@@ -34,7 +34,7 @@ const Index = () => {
     textAlign: "left",
     fontSize: 24,
     lineHeight: 1.25,
-    padding: 64,
+    padding: 40,
     fadePct: 60,
     backdropOpacity: 1,
     cornerRadius: 0,
