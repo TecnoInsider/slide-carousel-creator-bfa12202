@@ -32,7 +32,7 @@ const Index = () => {
   const [styleConfig, setStyleConfig] = useState<StyleConfig>({
     fontFamily: "'Montserrat', sans-serif",
     textAlign: "left",
-    fontSize: 45,
+    fontSize: 24,
     lineHeight: 1.25,
     padding: 64,
     fadePct: 60,
