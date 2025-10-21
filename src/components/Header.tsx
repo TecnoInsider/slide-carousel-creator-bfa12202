@@ -4,10 +4,10 @@ export const Header = () => {
       <div className="max-w-[920px] mx-auto px-4 sm:px-6 py-3 sm:py-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            Instagram Slide Carousel Creator
+            Создатель каруселей для Instagram
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Paste text → slides appear → tap "Replace image" per slide. Long-press any image to save.
+            Вставьте текст → появятся слайды → нажмите &quot;Заменить фото&quot; для каждого слайда. Зажмите изображение для сохранения.
           </p>
         </div>
       </div>
