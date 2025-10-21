@@ -119,7 +119,7 @@ const Index = () => {
             </div>
 
             <p className="text-xs text-muted-foreground mt-4">
-              Output size: 1080×1350 (4:5). Long-press any image to save. Tap &quot;Replace image&quot; to set slide background.
+              Output size: 1080×1350 (4:5). Tap &quot;Replace image&quot; to set slide background, use Download to save.
             </p>
           </div>
 

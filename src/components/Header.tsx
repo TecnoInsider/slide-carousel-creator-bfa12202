@@ -7,7 +7,7 @@ export const Header = () => {
             Instagram Slide Carousel Creator
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Paste text → slides appear → tap &quot;Replace image&quot; per slide. Long-press any image to save.
+            Paste text → slides appear → tap &quot;Replace image&quot; per slide, then use Download button.
           </p>
         </div>
       </div>
