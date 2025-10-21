@@ -70,7 +70,27 @@ export const SlideCard = ({
           ctx.clip();
         }
 
-        ctx.drawImage(img, 0, 0, width, height);
+        // Calculate dimensions to maintain aspect ratio (cover mode)
+        const imgRatio = img.width / img.height;
+        const canvasRatio = width / height;
+        
+        let drawWidth, drawHeight, offsetX, offsetY;
+        
+        if (imgRatio > canvasRatio) {
+          // Image is wider than canvas
+          drawHeight = height;
+          drawWidth = img.width * (height / img.height);
+          offsetX = (width - drawWidth) / 2;
+          offsetY = 0;
+        } else {
+          // Image is taller than canvas
+          drawWidth = width;
+          drawHeight = img.height * (width / img.width);
+          offsetX = 0;
+          offsetY = (height - drawHeight) / 2;
+        }
+
+        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
         
         if (styleConfig.cornerRadius > 0) {
           ctx.restore();
