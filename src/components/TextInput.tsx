@@ -21,23 +21,23 @@ export const TextInput = ({
     <div className="space-y-3">
       <div>
         <Label htmlFor="story" className="text-xs text-muted-foreground">
-          1) Вставьте текст вашей истории (один абзац на слайд)
+          1) Paste your story text (one paragraph per slide)
         </Label>
         <Textarea
           id="story"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          placeholder="Вставьте текст сюда. Разделяйте абзацы пустой строкой (двойной перенос)."
+          placeholder="Paste your text here. Separate paragraphs with a blank line (double newline)."
           className="min-h-[160px] mt-2 resize-y bg-input border-border"
         />
       </div>
       
       <div className="flex gap-2 flex-wrap">
         <Badge variant="secondary" className="rounded-full px-3 py-1">
-          Абзацев: {paragraphCount}
+          Paragraphs: {paragraphCount}
         </Badge>
         <Badge variant="secondary" className="rounded-full px-3 py-1">
-          С фото: {photosCount}/{totalSlides}
+          With photos: {photosCount}/{totalSlides}
         </Badge>
       </div>
     </div>

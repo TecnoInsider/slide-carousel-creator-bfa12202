@@ -52,7 +52,7 @@ const Index = () => {
 
   const handleUpdateSlides = () => {
     if (paragraphs.length === 0) {
-      toast.error("Пожалуйста, сначала вставьте текст");
+      toast.error("Please paste some text first");
       return;
     }
 
@@ -66,12 +66,12 @@ const Index = () => {
     });
 
     setSlides(newSlides);
-    toast.success(`Создано слайдов: ${newSlides.length}`);
+    toast.success(`Created ${newSlides.length} slides`);
   };
 
   const handleClearResults = () => {
     setSlides([]);
-    toast.info("Результаты очищены");
+    toast.info("Results cleared");
   };
 
   const handleSlideImageUpdate = (slideId: string, imageUrl: string) => {
@@ -107,19 +107,19 @@ const Index = () => {
                 onClick={handleUpdateSlides}
                 className="flex-1 h-12 text-base font-bold"
               >
-                Обновить слайды
+                Update Slides
               </Button>
               <Button
                 onClick={handleClearResults}
                 variant="secondary"
                 className="flex-1 h-12 text-base"
               >
-                Очистить результаты
+                Clear Results
               </Button>
             </div>
 
             <p className="text-xs text-muted-foreground mt-4">
-              Размер: 1080×1350 (4:5). Зажмите изображение для сохранения. Нажмите &quot;Заменить фото&quot; для смены фона слайда.
+              Output size: 1080×1350 (4:5). Long-press any image to save. Tap &quot;Replace image&quot; to set slide background.
             </p>
           </div>
 

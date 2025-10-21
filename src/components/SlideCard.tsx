@@ -173,7 +173,7 @@ export const SlideCard = ({
       a.download = `slide-${slide.id}.png`;
       a.click();
       URL.revokeObjectURL(url);
-      toast.success("Слайд скачан");
+      toast.success("Slide downloaded");
     });
   };
 
@@ -182,7 +182,7 @@ export const SlideCard = ({
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      toast.error("Пожалуйста, выберите файл изображения");
+      toast.error("Please select an image file");
       return;
     }
 
@@ -190,7 +190,7 @@ export const SlideCard = ({
     reader.onload = (event) => {
       const imageUrl = event.target?.result as string;
       onImageUpdate(imageUrl);
-      toast.success("Изображение обновлено");
+      toast.success("Image updated");
     };
     reader.readAsDataURL(file);
   };
@@ -218,7 +218,7 @@ export const SlideCard = ({
           className="text-xs"
         >
           <ImageIcon className="h-3.5 w-3.5 mr-1.5" />
-          Заменить фото
+          Replace image
         </Button>
         <Button
           onClick={handleDownload}
@@ -228,7 +228,7 @@ export const SlideCard = ({
           disabled={isRendering}
         >
           <Download className="h-3.5 w-3.5 mr-1.5" />
-          Скачать
+          Download
         </Button>
       </div>
     </div>
