@@ -20,6 +20,7 @@ export const SlideCard = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isRendering, setIsRendering] = useState(false);
+  const lastTapTimeRef = useRef<number>(0);
 
   useEffect(() => {
     renderSlide();
@@ -215,12 +216,31 @@ export const SlideCard = ({
     reader.readAsDataURL(file);
   };
 
+  const handleDoubleClick = () => {
+    handleDownload();
+  };
+
+  const handleTouchEnd = () => {
+    const currentTime = Date.now();
+    const tapGap = currentTime - lastTapTimeRef.current;
+    
+    if (tapGap < 300 && tapGap > 0) {
+      // Double tap detected
+      handleDownload();
+    }
+    
+    lastTapTimeRef.current = currentTime;
+  };
+
   return (
     <div className="bg-black border border-border rounded-xl overflow-hidden">
       <canvas
         ref={canvasRef}
-        className="w-full block"
+        className="w-full block cursor-pointer"
         style={{ aspectRatio: "4/5" }}
+        onDoubleClick={handleDoubleClick}
+        onTouchEnd={handleTouchEnd}
+        title="Double click/tap to download"
       />
       
       <div className="flex gap-2 justify-end p-3 bg-card/50">
