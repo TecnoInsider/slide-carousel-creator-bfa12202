@@ -182,20 +182,52 @@ export const SlideCard = ({
     setIsRendering(false);
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    canvas.toBlob((blob) => {
+    canvas.toBlob(async (blob) => {
       if (!blob) return;
+
+      // Try Web Share API first (works better in Telegram and other mobile browsers)
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([blob], `slide-${slide.id}.png`, { type: 'image/png' });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'Instagram Slide',
+            });
+            toast.success("Slide shared");
+            return;
+          }
+        } catch (err) {
+          // If share fails or is cancelled, fall through to download
+          console.log("Share failed, using download:", err);
+        }
+      }
+
+      // Fallback to download
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = `slide-${slide.id}.png`;
+      
+      // Force download attribute and prevent default behavior
+      a.setAttribute('download', `slide-${slide.id}.png`);
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      
       a.click();
-      URL.revokeObjectURL(url);
+      
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+      
       toast.success("Slide downloaded");
-    });
+    }, 'image/png');
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
