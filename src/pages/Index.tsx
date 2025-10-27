@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { TextInput } from "@/components/TextInput";
 import { StyleControls } from "@/components/StyleControls";
@@ -49,6 +49,27 @@ const Index = () => {
     .filter((p) => p.length > 0);
 
   const photosCount = slides.filter((s) => s.imageUrl).length;
+
+  // Auto-update slides when text changes
+  useEffect(() => {
+    if (paragraphs.length === 0) {
+      if (slides.length > 0) {
+        setSlides([]);
+      }
+      return;
+    }
+
+    const newSlides: Slide[] = paragraphs.map((text, index) => {
+      const existingSlide = slides[index];
+      return {
+        id: existingSlide?.id || `slide-${Date.now()}-${index}`,
+        text,
+        imageUrl: existingSlide?.imageUrl,
+      };
+    });
+
+    setSlides(newSlides);
+  }, [storyText]);
 
   const handleUpdateSlides = () => {
     if (paragraphs.length === 0) {
