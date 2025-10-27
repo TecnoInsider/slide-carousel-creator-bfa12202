@@ -182,7 +182,7 @@ export const SlideCard = ({
     setIsRendering(false);
   };
 
-  const handleDownload = async () => {
+  const handleDownload = async (shareOnly = false) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -190,19 +190,26 @@ export const SlideCard = ({
       if (!blob) return;
 
       // Try Web Share API first (works better in Telegram and other mobile browsers)
-      if (navigator.share) {
+      if (navigator.share && (navigator as any).canShare) {
         try {
           const file = new File([blob], `slide-${slide.id}.png`, { type: 'image/png' });
-          await navigator.share({
-            files: [file],
-            title: 'Instagram Slide',
-          });
-          toast.success("Slide shared");
-          return;
+          if ((navigator as any).canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: 'Instagram Slide',
+            });
+            toast.success("Slide shared");
+            return;
+          }
         } catch (err) {
-          // If share fails or is cancelled, fall through to download
+          // If share fails or is cancelled, fall through conditionally
           console.log("Share failed, using download:", err);
         }
+      }
+
+      if (shareOnly) {
+        toast.error("Долгое нажатие: сохранение недоступно в этом браузере");
+        return;
       }
 
       // Fallback to download - prevent navigation to blob URL
@@ -256,7 +263,7 @@ export const SlideCard = ({
 
   const handlePressStart = () => {
     longPressTimerRef.current = setTimeout(() => {
-      handleDownload();
+      handleDownload(true);
       longPressTimerRef.current = null;
     }, 500);
   };
@@ -309,7 +316,7 @@ export const SlideCard = ({
           Replace image
         </Button>
         <Button
-          onClick={handleDownload}
+          onClick={() => handleDownload(false)}
           variant="secondary"
           size="sm"
           className="text-xs"
