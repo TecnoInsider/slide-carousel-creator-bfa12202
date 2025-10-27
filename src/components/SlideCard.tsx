@@ -207,24 +207,32 @@ export const SlideCard = ({
         }
       }
 
-      // Fallback to download
+      // Fallback to download - prevent navigation to blob URL
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = `slide-${slide.id}.png`;
-      
-      // Force download attribute and prevent default behavior
-      a.setAttribute('download', `slide-${slide.id}.png`);
+      a.rel = 'noopener noreferrer';
       a.style.display = 'none';
+      
+      // Add to DOM temporarily
       document.body.appendChild(a);
       
+      // Trigger download
       a.click();
       
-      // Cleanup
-      setTimeout(() => {
+      // Immediate cleanup to prevent navigation
+      requestAnimationFrame(() => {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-      }, 100);
+      });
+      
+      // Prevent any navigation by forcing location back if needed
+      setTimeout(() => {
+        if (window.location.href.startsWith('blob:')) {
+          window.history.back();
+        }
+      }, 50);
       
       toast.success("Slide downloaded");
     }, 'image/png');
