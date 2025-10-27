@@ -190,17 +190,15 @@ export const SlideCard = ({
       if (!blob) return;
 
       // Try Web Share API first (works better in Telegram and other mobile browsers)
-      if (navigator.share && navigator.canShare) {
+      if (navigator.share) {
         try {
           const file = new File([blob], `slide-${slide.id}.png`, { type: 'image/png' });
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              files: [file],
-              title: 'Instagram Slide',
-            });
-            toast.success("Slide shared");
-            return;
-          }
+          await navigator.share({
+            files: [file],
+            title: 'Instagram Slide',
+          });
+          toast.success("Slide shared");
+          return;
         } catch (err) {
           // If share fails or is cancelled, fall through to download
           console.log("Share failed, using download:", err);
