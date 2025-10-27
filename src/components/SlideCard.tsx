@@ -232,15 +232,28 @@ export const SlideCard = ({
     lastTapTimeRef.current = currentTime;
   };
 
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // Prevent triggering on double click
+    if (e.detail === 1) {
+      // Single click - open file dialog
+      setTimeout(() => {
+        if (e.detail === 1) {
+          fileInputRef.current?.click();
+        }
+      }, 200);
+    }
+  };
+
   return (
     <div className="bg-black border border-border rounded-xl overflow-hidden">
       <canvas
         ref={canvasRef}
         className="w-full block cursor-pointer"
         style={{ aspectRatio: "4/5" }}
+        onClick={handleCanvasClick}
         onDoubleClick={handleDoubleClick}
         onTouchEnd={handleTouchEnd}
-        title="Double click/tap to download"
+        title="Click to replace image, double click/tap to download"
       />
       
       <div className="flex gap-2 justify-end p-3 bg-card/50">
