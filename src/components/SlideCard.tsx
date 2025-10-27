@@ -20,7 +20,7 @@ export const SlideCard = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isRendering, setIsRendering] = useState(false);
-  const lastTapTimeRef = useRef<number>(0);
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     renderSlide();
@@ -216,31 +216,24 @@ export const SlideCard = ({
     reader.readAsDataURL(file);
   };
 
-  const handleDoubleClick = () => {
-    handleDownload();
-  };
-
-  const handleTouchEnd = () => {
-    const currentTime = Date.now();
-    const tapGap = currentTime - lastTapTimeRef.current;
-    
-    if (tapGap < 300 && tapGap > 0) {
-      // Double tap detected
+  const handlePressStart = () => {
+    longPressTimerRef.current = setTimeout(() => {
       handleDownload();
-    }
-    
-    lastTapTimeRef.current = currentTime;
+      longPressTimerRef.current = null;
+    }, 500);
   };
 
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    // Prevent triggering on double click
-    if (e.detail === 1) {
-      // Single click - open file dialog
-      setTimeout(() => {
-        if (e.detail === 1) {
-          fileInputRef.current?.click();
-        }
-      }, 200);
+  const handlePressEnd = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+
+  const handleCanvasClick = () => {
+    // Only open file dialog if it wasn't a long press
+    if (!longPressTimerRef.current) {
+      fileInputRef.current?.click();
     }
   };
 
@@ -251,9 +244,13 @@ export const SlideCard = ({
         className="w-full block cursor-pointer"
         style={{ aspectRatio: "4/5" }}
         onClick={handleCanvasClick}
-        onDoubleClick={handleDoubleClick}
-        onTouchEnd={handleTouchEnd}
-        title="Click to replace image, double click/tap to download"
+        onMouseDown={handlePressStart}
+        onMouseUp={handlePressEnd}
+        onMouseLeave={handlePressEnd}
+        onTouchStart={handlePressStart}
+        onTouchEnd={handlePressEnd}
+        onTouchCancel={handlePressEnd}
+        title="Tap to replace image, long press to download"
       />
       
       <div className="flex gap-2 justify-end p-3 bg-card/50">
