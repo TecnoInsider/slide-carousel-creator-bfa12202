@@ -1,25 +1,34 @@
 import { useEffect, useRef, useState } from "react";
 import { Slide, StyleConfig } from "@/pages/Index";
 import { Button } from "@/components/ui/button";
-import { Download, Image as ImageIcon } from "lucide-react";
+import { Download, Image as ImageIcon, Wand2 } from "lucide-react";
 import { toast } from "sonner";
+import { GenerateImageDialog } from "@/components/GenerateImageDialog";
+import { startImageGeneration, pollGenerationStatus } from "@/lib/imageGeneration";
+import type { ImageStyle } from "@/types/generation";
 
 interface SlideCardProps {
   slide: Slide;
+  slideNumber: number;
   styleConfig: StyleConfig;
   isLast: boolean;
   onImageUpdate: (imageUrl: string) => void;
+  storyText: string;
 }
 
 export const SlideCard = ({
   slide,
+  slideNumber,
   styleConfig,
   isLast,
   onImageUpdate,
+  storyText,
 }: SlideCardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isRendering, setIsRendering] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -282,8 +291,53 @@ export const SlideCard = ({
     }
   };
 
+  const handleGenerateImage = async (userPrompt: string, style: ImageStyle) => {
+    setIsGenerating(true);
+    
+    try {
+      await startImageGeneration({
+        slideId: slide.id,
+        slideNumber,
+        slideText: slide.text,
+        fullStoryText: storyText,
+        userPrompt,
+        style,
+        styleConfig,
+      });
+
+      toast.info("Image generation started...");
+
+      const job = await pollGenerationStatus(slide.id, (job) => {
+        if (job.status === 'processing') {
+          toast.info("Generating image...");
+        }
+      });
+
+      if (job.status === 'completed' && job.image_url) {
+        onImageUpdate(job.image_url);
+        toast.success("Image generated successfully!");
+      } else if (job.status === 'error') {
+        toast.error(job.error_message || "Image generation failed");
+      }
+    } catch (error) {
+      console.error("Generation error:", error);
+      toast.error("Failed to generate image");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
-    <div className="bg-black border border-border rounded-xl overflow-hidden">
+    <div className="bg-black border border-border rounded-xl overflow-hidden relative">
+      {isGenerating && (
+        <div className="absolute inset-0 bg-black/80 z-10 flex items-center justify-center">
+          <div className="text-center space-y-3">
+            <div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto" />
+            <p className="text-white font-medium">Generating image...</p>
+          </div>
+        </div>
+      )}
+      
       <canvas
         ref={canvasRef}
         className="w-full block cursor-pointer"
@@ -325,7 +379,24 @@ export const SlideCard = ({
           <Download className="h-3.5 w-3.5 mr-1.5" />
           Download
         </Button>
+        <Button
+          onClick={() => setShowGenerateDialog(true)}
+          variant="secondary"
+          size="sm"
+          className="text-xs"
+          disabled={isRendering || isGenerating}
+        >
+          <Wand2 className="h-3.5 w-3.5 mr-1.5" />
+          Generate
+        </Button>
       </div>
+
+      <GenerateImageDialog
+        open={showGenerateDialog}
+        onOpenChange={setShowGenerateDialog}
+        onGenerate={handleGenerateImage}
+        isMultiple={false}
+      />
     </div>
   );
 };
