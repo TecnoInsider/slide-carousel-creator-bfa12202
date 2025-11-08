@@ -219,7 +219,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header onLogout={handleLogout} />
+      <Header onLogout={user ? handleLogout : undefined} />
       
       <main className="max-w-[920px] mx-auto px-4 sm:px-6 py-6">
         <div className="space-y-6">
