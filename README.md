@@ -1,73 +1,181 @@
-# Welcome to your Lovable project
+# 📸 Instagram Slide Carousel Creator
 
-## Project info
+Веб-приложение для создания красивых текстовых слайдов для Instagram каруселей с автоматической генерацией фоновых изображений.
 
-**URL**: https://lovable.dev/projects/d0d2583c-80da-4d85-a1ab-185d98c03787
+## ✨ Возможности
 
-## How can I edit this code?
+- 🎨 Автоматическое разбиение текста на слайды
+- 🖼️ AI-генерация фоновых изображений для каждого слайда
+- ⚙️ Гибкая настройка стилей (шрифт, размер, отступы, тени)
+- 📱 Адаптивный дизайн для всех устройств
+- 🔐 Безопасная аутентификация пользователей
+- 💾 Сохранение истории генераций
+- 📊 Формат 4:5 (1080×1350) оптимизированный для Instagram
 
-There are several ways of editing your application.
+## 🚀 Быстрый старт
 
-**Use Lovable**
+### Локальная разработка
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d0d2583c-80da-4d85-a1ab-185d98c03787) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+```bash
+# Клонировать репозиторий
 git clone <YOUR_GIT_URL>
+cd instagram-carousel-creator
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Установить зависимости
+npm install
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Настроить переменные окружения
+cp .env.example .env
+# Отредактируйте .env и добавьте ваши Supabase ключи
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Запустить dev сервер
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+Откройте [http://localhost:5173](http://localhost:5173)
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Production развертывание
 
-**Use GitHub Codespaces**
+**📖 Полная инструкция в файле [DEPLOYMENT.md](./DEPLOYMENT.md)**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Быстрый запуск через Docker:
 
-## What technologies are used for this project?
+```bash
+# Настроить .env
+cp .env.example .env
+nano .env  # добавьте Supabase ключи
 
-This project is built with:
+# Запустить
+docker compose up -d --build
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# Приложение доступно на http://localhost:8080
+```
 
-## How can I deploy this project?
+## 🛠️ Технологии
 
-Simply open [Lovable](https://lovable.dev/projects/d0d2583c-80da-4d85-a1ab-185d98c03787) and click on Share -> Publish.
+- **Frontend**: React 18, TypeScript, Vite
+- **UI**: Tailwind CSS, Radix UI, shadcn/ui
+- **Backend**: Supabase (Auth, Database, Storage)
+- **Deployment**: Docker, Nginx
+- **AI**: Lovable AI для генерации изображений
 
-## Can I connect a custom domain to my Lovable project?
+## 📁 Структура проекта
 
-Yes, you can!
+```
+.
+├── src/
+│   ├── components/       # React компоненты
+│   ├── pages/           # Страницы приложения
+│   ├── lib/             # Утилиты и хелперы
+│   ├── hooks/           # Custom React hooks
+│   └── integrations/    # Supabase интеграция
+├── supabase/
+│   └── migrations/      # Миграции БД
+├── public/              # Статические файлы
+├── Dockerfile           # Docker образ
+├── docker-compose.yml   # Docker оркестрация
+├── nginx.conf           # Nginx конфигурация
+├── database-init.sql    # Инициализация БД
+└── DEPLOYMENT.md        # Полная инструкция
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🔑 Переменные окружения
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Создайте `.env` файл (см. `.env.example`):
+
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-anon-key
+VITE_SUPABASE_PROJECT_ID=your-project-id
+```
+
+Получите ключи из Supabase Dashboard → Project Settings → API
+
+## 📖 Использование
+
+1. **Войдите или зарегистрируйтесь** (при первом заходе можно просматривать без авторизации)
+2. **Вставьте текст** в текстовое поле (разделяйте параграфы пустой строкой)
+3. **Настройте стили** (шрифт, размер, отступы, цвет)
+4. **Нажмите "Update Slides"** для создания слайдов
+5. **"Generate All Images"** для AI-генерации фонов
+6. **Используйте заголовки**: оберните текст в `**заголовок**` для увеличенного размера
+7. **Сохраните изображения** долгим нажатием на слайд
+
+## 🔒 Безопасность
+
+- ✅ Row Level Security (RLS) включен для всех таблиц
+- ✅ Пользователи видят только свои данные
+- ✅ Аутентификация через Supabase Auth
+- ✅ Защищенные API endpoints
+- ✅ Автоматическое создание профилей пользователей
+
+## 📊 База данных
+
+### Таблицы
+
+- **profiles** - профили пользователей
+- **generation_jobs** - история генераций изображений
+
+Инициализация: запустите `database-init.sql` в Supabase SQL Editor
+
+## 🐛 Решение проблем
+
+### Ошибка при логине "requested path is invalid"
+
+В Supabase Dashboard → Authentication → URL Configuration добавьте URL вашего приложения в Redirect URLs
+
+### Не видно generation_jobs
+
+Убедитесь что:
+- Пользователь авторизован
+- RLS политики применены (запустите database-init.sql)
+- user_id заполняется при создании job
+
+### Docker контейнер не запускается
+
+```bash
+docker compose logs  # смотрим логи
+docker compose down
+docker compose up -d --build  # пересобираем
+```
+
+## 📝 Команды разработки
+
+```bash
+# Разработка
+npm run dev           # Dev сервер на :5173
+npm run build         # Production сборка
+npm run preview       # Просмотр production build
+
+# Docker
+docker compose up -d           # Запуск
+docker compose down            # Остановка
+docker compose logs -f         # Логи
+docker compose up -d --build   # Пересборка
+```
+
+## 🌐 Production чеклист
+
+- [ ] Настроить Supabase проект
+- [ ] Запустить database-init.sql
+- [ ] Настроить Redirect URLs в Supabase
+- [ ] Создать .env с production ключами
+- [ ] Настроить домен и SSL
+- [ ] Запустить через Docker
+- [ ] Протестировать регистрацию и генерацию
+
+**Полная инструкция: [DEPLOYMENT.md](./DEPLOYMENT.md)**
+
+## 🎨 Разработка в Lovable
+
+**Project URL**: https://lovable.dev/projects/d0d2583c-80da-4d85-a1ab-185d98c03787
+
+Изменения через Lovable автоматически коммитятся в этот репозиторий.
+
+## 📄 Лицензия
+
+MIT
+
+---
+
+**Создано с использованием [Lovable](https://lovable.dev)** 💜
