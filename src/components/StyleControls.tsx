@@ -73,7 +73,7 @@ export const StyleControls = ({ config, onChange }: StyleControlsProps) => {
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <div>
-            <Label htmlFor="fontSize" className="text-xs text-muted-foreground">Base font size (px)</Label>
+            <Label htmlFor="fontSize" className="text-xs text-muted-foreground">Размер текста (px)</Label>
             <Input
               id="fontSize"
               type="number"
@@ -81,6 +81,19 @@ export const StyleControls = ({ config, onChange }: StyleControlsProps) => {
               max={64}
               value={config.fontSize}
               onChange={(e) => updateConfig("fontSize", Number(e.target.value))}
+              className="mt-1.5"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="headingSize" className="text-xs text-muted-foreground">Размер заголовка (px)</Label>
+            <Input
+              id="headingSize"
+              type="number"
+              min={24}
+              max={96}
+              value={config.headingSize}
+              onChange={(e) => updateConfig("headingSize", Number(e.target.value))}
               className="mt-1.5"
             />
           </div>

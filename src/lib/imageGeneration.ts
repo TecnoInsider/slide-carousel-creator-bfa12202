@@ -8,12 +8,19 @@ const N8N_CHECK_URL = "https://n8n.orangespace.io/webhook/check-slides-result-35
  * Starts image generation for a single slide
  */
 export async function startImageGeneration(request: GenerateImageRequest): Promise<void> {
+  // Get current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
   // Create job in database
   const { error: insertError } = await supabase
     .from('generation_jobs')
     .insert({
       slide_id: request.slideId,
-      status: 'pending'
+      status: 'pending',
+      user_id: user.id,
     });
 
   if (insertError) {

@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import { Header } from "@/components/Header";
 import { TextInput } from "@/components/TextInput";
 import { StyleControls } from "@/components/StyleControls";
@@ -9,11 +11,13 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { startImageGeneration, pollGenerationStatus } from "@/lib/imageGeneration";
 import type { ImageStyle, GenerationJob } from "@/types/generation";
+import { User, Session } from "@supabase/supabase-js";
 
 export interface StyleConfig {
   fontFamily: string;
   textAlign: "left" | "center" | "right";
   fontSize: number;
+  headingSize: number;
   lineHeight: number;
   padding: number;
   fadePct: number;
@@ -31,12 +35,17 @@ export interface Slide {
 }
 
 const Index = () => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [storyText, setStoryText] = useState("");
   const [slides, setSlides] = useState<Slide[]>([]);
   const [styleConfig, setStyleConfig] = useState<StyleConfig>({
     fontFamily: "'Montserrat', sans-serif",
     textAlign: "left",
     fontSize: 24,
+    headingSize: 36,
     lineHeight: 1.25,
     padding: 40,
     fadePct: 60,
@@ -50,6 +59,35 @@ const Index = () => {
   const [isGeneratingAll, setIsGeneratingAll] = useState(false);
   const [showGenerateDialog, setShowGenerateDialog] = useState(false);
   const [generationJobs, setGenerationJobs] = useState<Map<string, GenerationJob>>(new Map());
+
+  // Auth check
+  useEffect(() => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+        
+        if (!session?.user) {
+          navigate("/auth");
+        }
+      }
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+      
+      if (!session?.user) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const paragraphs = storyText
     .split("\n\n")
@@ -165,9 +203,23 @@ const Index = () => {
     toast.success(`Started generating images for ${slides.length} slides`);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Вы вышли из аккаунта");
+    navigate("/auth");
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Header />
+      <Header onLogout={handleLogout} />
       
       <main className="max-w-[920px] mx-auto px-4 sm:px-6 py-6">
         <div className="space-y-6">

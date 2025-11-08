@@ -123,8 +123,33 @@ export const SlideCard = ({
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
-    // Draw text
-    ctx.font = `${styleConfig.fontSize * 2}px ${styleConfig.fontFamily}`;
+    // Parse text for headings (text wrapped in **)
+    const parseTextSegments = (text: string): Array<{ text: string; isHeading: boolean }> => {
+      const segments: Array<{ text: string; isHeading: boolean }> = [];
+      const regex = /\*\*(.*?)\*\*/g;
+      let lastIndex = 0;
+      let match;
+
+      while ((match = regex.exec(text)) !== null) {
+        // Add normal text before heading
+        if (match.index > lastIndex) {
+          segments.push({ text: text.substring(lastIndex, match.index), isHeading: false });
+        }
+        // Add heading
+        segments.push({ text: match[1], isHeading: true });
+        lastIndex = regex.lastIndex;
+      }
+
+      // Add remaining text
+      if (lastIndex < text.length) {
+        segments.push({ text: text.substring(lastIndex), isHeading: false });
+      }
+
+      return segments.length > 0 ? segments : [{ text, isHeading: false }];
+    };
+
+    const segments = parseTextSegments(slide.text);
+    
     ctx.fillStyle = styleConfig.textColor;
     ctx.textAlign = styleConfig.textAlign;
     
@@ -137,33 +162,53 @@ export const SlideCard = ({
     }
 
     const padding = styleConfig.padding * 2;
-    const lineHeightPx = styleConfig.fontSize * 2 * styleConfig.lineHeight;
-    const words = slide.text.split(" ");
-    const lines: string[] = [];
-    let currentLine = "";
-
-    // Word wrap
     const maxWidth = width - padding * 2;
-    words.forEach((word) => {
-      const testLine = currentLine ? `${currentLine} ${word}` : word;
-      const metrics = ctx.measureText(testLine);
-      if (metrics.width > maxWidth && currentLine) {
-        lines.push(currentLine);
-        currentLine = word;
-      } else {
-        currentLine = testLine;
+    const lines: Array<{ text: string; isHeading: boolean }> = [];
+
+    // Word wrap for each segment
+    segments.forEach((segment) => {
+      const fontSize = segment.isHeading ? styleConfig.headingSize * 2 : styleConfig.fontSize * 2;
+      ctx.font = `${fontSize}px ${styleConfig.fontFamily}`;
+      
+      const words = segment.text.split(" ");
+      let currentLine = "";
+
+      words.forEach((word) => {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && currentLine) {
+          lines.push({ text: currentLine, isHeading: segment.isHeading });
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      });
+      
+      if (currentLine) {
+        lines.push({ text: currentLine, isHeading: segment.isHeading });
       }
     });
-    if (currentLine) lines.push(currentLine);
 
-    // Draw lines
-    let y = height - padding - (lines.length - 1) * lineHeightPx;
+    // Calculate total height needed
+    let totalHeight = 0;
     lines.forEach((line) => {
+      const fontSize = line.isHeading ? styleConfig.headingSize * 2 : styleConfig.fontSize * 2;
+      totalHeight += fontSize * styleConfig.lineHeight;
+    });
+
+    // Draw lines from bottom
+    let y = height - padding - totalHeight;
+    lines.forEach((line) => {
+      const fontSize = line.isHeading ? styleConfig.headingSize * 2 : styleConfig.fontSize * 2;
+      const lineHeightPx = fontSize * styleConfig.lineHeight;
+      
+      ctx.font = `${fontSize}px ${styleConfig.fontFamily}`;
+      
       let x = padding;
       if (styleConfig.textAlign === "center") x = width / 2;
       if (styleConfig.textAlign === "right") x = width - padding;
       
-      ctx.fillText(line, x, y);
+      ctx.fillText(line.text, x, y + fontSize);
       y += lineHeightPx;
     });
 
