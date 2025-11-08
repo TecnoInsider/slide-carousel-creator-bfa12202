@@ -25,6 +25,7 @@ const Auth = () => {
         setUser(session?.user ?? null);
         
         if (session?.user) {
+          toast.success("Вы успешно вошли в систему!");
           navigate("/");
         }
       }

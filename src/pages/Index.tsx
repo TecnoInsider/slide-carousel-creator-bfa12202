@@ -62,32 +62,24 @@ const Index = () => {
 
   // Auth check
   useEffect(() => {
-    // Set up auth state listener FIRST
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-        
-        if (!session?.user) {
-          navigate("/auth");
-        }
       }
     );
 
-    // THEN check for existing session
+    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
-      
-      if (!session?.user) {
-        navigate("/auth");
-      }
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate]);
+  }, []);
 
   const paragraphs = storyText
     .split("\n\n")
@@ -150,6 +142,14 @@ const Index = () => {
   };
 
   const handleGenerateAll = async (userPrompt: string, style: ImageStyle) => {
+    // Проверяем авторизацию перед генерацией
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast.error("Для генерации изображений необходимо войти в аккаунт");
+      setTimeout(() => navigate("/auth"), 1500);
+      return;
+    }
+
     if (slides.length === 0) {
       toast.error("No slides to generate images for");
       return;
